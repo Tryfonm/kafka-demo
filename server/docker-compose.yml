@@ -1,0 +1,74 @@
+version: '3'
+
+networks:
+  kafka-network:
+    name: kafka-network
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.18.0.0/16
+        
+services:
+  zookeeper:
+    image: kafka-server
+    container_name: zookeeper
+    networks:
+      kafka-network:
+        ipv4_address: 172.18.0.2
+    volumes:
+      - ./data-zookeeper:/app/data
+    command: ["sh", "-c", "bin/zookeeper-server-start.sh config/zookeeper.properties"]
+    ports:
+      - 2888:2888
+    restart: always
+
+  broker:
+    image: kafka-server
+    container_name: broker
+    networks:
+      kafka-network:
+        ipv4_address: 172.18.0.3
+    volumes:
+      - ./data-broker:/app/data
+    command: ["sh", "-c", "bin/kafka-server-start.sh config/server.properties"]
+    ports:
+      - 9092:9092
+    restart: always
+
+  topic-creator:
+    image: kafka-server
+    container_name: topic-creator
+    networks:
+      kafka-network:
+        ipv4_address: 172.18.0.4
+    volumes:
+      - ./data-broker:/app/data
+    command: ["sh", "-c", "bin/kafka-topics.sh --create --topic quickstart-events --bootstrap-server 172.18.0.3:9092"]
+    restart: 'no'
+
+  # producer_python:
+  #   image: kafka
+  #   container_name: producer_python
+  #   networks:
+  #     kafka-network:
+  #       ipv4_address: 172.18.0.4
+  #   volumes:
+  #     - ./data-producer_python:/app/data
+  #   # command: ["sh", "-c", "bin/zookeeper-server-start.sh config/zookeeper.properties"]
+  #   restart: 'no'
+
+  # consumer_python:
+  #   image: kafka
+  #   container_name: consumer_python
+  #   networks:
+  #     kafka-network:
+  #       ipv4_address: 172.18.0.5
+  #   volumes:
+  #     - ./data-consumer_python:/app/data
+  #   # command: ["sh", "-c", "bin/zookeeper-server-start.sh config/zookeeper.properties"]
+  #   restart: 'no'
+
+volumes:
+  zookeeper-data:
+  broker-data:

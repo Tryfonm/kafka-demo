@@ -1,0 +1,55 @@
+version: '3'
+
+networks:
+  kafka-network:
+    name: kafka-network
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.18.0.0/16
+        
+services:
+  consumer:
+    image: kafka-python-img
+    container_name: consumer
+    networks:
+      kafka-network:
+        ipv4_address: 172.18.0.10
+    volumes:
+      - ./data-consumer:/app/data
+    command: ["sh", "-c", "python3 consumer_script.py"]
+    restart: 'no'
+
+  producer:
+    image: kafka-python-img
+    container_name: producer
+    networks:
+      kafka-network:
+        ipv4_address: 172.18.0.11
+    volumes:
+      - ./data-producer:/app/data
+    command: ["sh", "-c", "python3 producer_script.py"]
+    restart: 'no'
+
+  # producer_python:
+  #   image: kafka
+  #   container_name: producer_python
+  #   networks:
+  #     kafka-network:
+  #       ipv4_address: 172.18.0.4
+  #   volumes:
+  #     - ./data-producer_python:/app/data
+  #   # command: ["sh", "-c", "bin/zookeeper-server-start.sh config/zookeeper.properties"]
+  #   restart: 'no'
+
+  # consumer_python:
+  #   image: kafka
+  #   container_name: consumer_python
+  #   networks:
+  #     kafka-network:
+  #       ipv4_address: 172.18.0.5
+  #   volumes:
+  #     - ./data-consumer_python:/app/data
+  #   # command: ["sh", "-c", "bin/zookeeper-server-start.sh config/zookeeper.properties"]
+  #   restart: 'no'
