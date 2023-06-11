@@ -1,0 +1,23 @@
+version: '3'
+
+networks:
+  kafka-network:
+    name: kafka-network
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.18.0.0/16
+        
+services:
+  producer-python:
+    # image: kafka-server
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: producer-python
+    networks:
+      kafka-network:
+        ipv4_address: 172.18.0.12
+    # command: [""]
+    restart: 'no'

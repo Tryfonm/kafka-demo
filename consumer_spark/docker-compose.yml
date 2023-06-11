@@ -1,0 +1,21 @@
+version: '3'
+
+networks:
+  kafka-network:
+    name: kafka-network
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.18.0.0/16
+        
+
+services:
+  pyspark:
+    image: jupyter/pyspark-notebook
+    container_name: pyspark
+    networks:
+      kafka-network:
+        ipv4_address: 172.18.0.30
+    ports:
+      - "8888:8888"

@@ -11,7 +11,10 @@ networks:
         
 services:
   zookeeper:
-    image: kafka-server
+    # image: kafka-server
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: zookeeper
     networks:
       kafka-network:
@@ -24,7 +27,10 @@ services:
     restart: always
 
   broker:
-    image: kafka-server
+    # image: kafka-server
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: broker
     networks:
       kafka-network:
@@ -37,7 +43,10 @@ services:
     restart: always
 
   topic-creator:
-    image: kafka-server
+    # image: kafka-server
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: topic-creator
     networks:
       kafka-network:
